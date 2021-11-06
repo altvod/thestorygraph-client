@@ -21,3 +21,4 @@ class Book:
     title: str = attr.ib(kw_only=True)
     series: Optional[SeriesRef] = attr.ib(kw_only=True)
     authors: list[AuthorRef] = attr.ib(kw_only=True)
+    url: str = attr.ib(kw_only=True)

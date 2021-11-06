@@ -25,8 +25,10 @@ class BrowseHandler(BaseHandler[list[Book]]):
         title_author_series = book_pane.find('div', 'book-title-author-and-series')
         # Title and ID
         title_node = title_author_series.find('a', href=self._HREF_RE_TITLE)
-        book_id = self._HREF_RE_TITLE.match(title_node.get('href')).group('book_id')  # type: ignore
+        book_rel_url = title_node.get('href')
+        book_id = self._HREF_RE_TITLE.match(book_rel_url).group('book_id')  # type: ignore
         book_title = title_node.get_text()
+        book_full_url = str(self._base_url / book_rel_url)
 
         # Series
         series_node = title_author_series.find('a', href=self._HREF_RE_SERIES)
@@ -49,6 +51,7 @@ class BrowseHandler(BaseHandler[list[Book]]):
             title=book_title,
             series=series,
             authors=authors,
+            url=book_full_url,
         )
         return book
 
