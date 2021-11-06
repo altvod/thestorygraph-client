@@ -28,7 +28,7 @@ class BrowseHandler(BaseHandler[list[Book]]):
         book_rel_url = title_node.get('href')
         book_id = self._HREF_RE_TITLE.match(book_rel_url).group('book_id')  # type: ignore
         book_title = title_node.get_text()
-        book_full_url = str(self._base_url / book_rel_url)
+        book_full_url = str(self._base_url / book_rel_url.strip('/'))
 
         # Series
         series_node = title_author_series.find('a', href=self._HREF_RE_SERIES)
