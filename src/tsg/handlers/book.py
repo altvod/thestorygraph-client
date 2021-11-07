@@ -32,9 +32,6 @@ class BookHandler(BaseHandler[Book]):
             title_author_series = book_pane.find('div', 'book-title-author-and-series')
             if title_author_series is not None:
                 book = self._book_page_parser.parse_book_pane(book_pane)
-            title_author_series = book_pane.find('div', 'book-title-author-and-series')
-            if title_author_series is not None:
-                book = self._book_page_parser.parse_book_pane(book_pane)
             elif book is not None:
                 # Main book pane has already been found
                 text = book_pane.get_text().strip()
