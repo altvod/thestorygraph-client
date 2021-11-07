@@ -1,4 +1,4 @@
-# thestorygraph-py (thestorygraph-client)
+# thestorygraph-client
 
 A Simple Python Client for TheStoryGraph.com
 
@@ -99,7 +99,7 @@ make test
 
 ## Links
 
-Homepage on GitHub: https://github.com/altvod/thestorygraph-py
+Homepage on GitHub: https://github.com/altvod/thestorygraph-client
 
 Project's page on PyPi: https://pypi.org/project/thestorygraph-client/
 
