@@ -6,6 +6,7 @@ import attr
 from bs4 import BeautifulSoup
 from yarl import URL
 
+from tsg import exc
 from tsg.handlers.base import BaseHandler
 from tsg.models import Book
 from tsg.handlers.book_common import BookPageParser
@@ -25,7 +26,16 @@ class BookHandler(BaseHandler[Book]):
     def parse_body(self, body: str) -> Book:
         soup = BeautifulSoup(body, 'html.parser')
         book_panes = soup.find_all('div', 'book-pane')
-        main_book_pane, descr_book_pane = book_panes[5:7]  # FIXME
+        i = 0
+        while i < len(book_panes) - 1:
+            book_pane = book_panes[i]
+            title_author_series = book_pane.find('div', 'book-title-author-and-series')
+            if title_author_series is not None:
+                break
+            i += 1
+        else:
+            raise exc.FailedToParse('Failed to parse book')
+        main_book_pane, descr_book_pane = book_panes[i:i+2]
         book = self._book_page_parser.parse_book_pane(main_book_pane)
         description = self._book_page_parser.parse_descr_book_pane(descr_book_pane)
         book_cover_div = soup.find('div', 'book-cover')
