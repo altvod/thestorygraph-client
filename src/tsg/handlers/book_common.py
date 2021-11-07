@@ -65,4 +65,5 @@ class BookPageParser:
         return book
 
     def parse_descr_book_pane(self, descr_book_pane: bs4.element.Tag) -> str:
-        return descr_book_pane.get_text().strip()
+        h4 = descr_book_pane.find('h4')
+        return h4.get_text().strip()

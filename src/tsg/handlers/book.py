@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Optional
 
 import attr
 from bs4 import BeautifulSoup
@@ -26,18 +26,28 @@ class BookHandler(BaseHandler[Book]):
     def parse_body(self, body: str) -> Book:
         soup = BeautifulSoup(body, 'html.parser')
         book_panes = soup.find_all('div', 'book-pane')
-        i = 0
-        while i < len(book_panes) - 1:
-            book_pane = book_panes[i]
+        book: Optional[Book] = None
+        description = ''
+        for book_pane in book_panes:
             title_author_series = book_pane.find('div', 'book-title-author-and-series')
             if title_author_series is not None:
+                book = self._book_page_parser.parse_book_pane(book_pane)
+            title_author_series = book_pane.find('div', 'book-title-author-and-series')
+            if title_author_series is not None:
+                book = self._book_page_parser.parse_book_pane(book_pane)
+            elif book is not None:
+                # Main book pane has already been found
+                text = book_pane.get_text().strip()
+                if text.startswith('Description'):
+                    description = text.split('\n', 1)[1].strip()
+
+            if description:
+                # Everything has been found
                 break
-            i += 1
-        else:
+
+        if book is None:
             raise exc.FailedToParse('Failed to parse book')
-        main_book_pane, descr_book_pane = book_panes[i:i+2]
-        book = self._book_page_parser.parse_book_pane(main_book_pane)
-        description = self._book_page_parser.parse_descr_book_pane(descr_book_pane)
+
         book_cover_div = soup.find('div', 'book-cover')
         cover_url = self._book_page_parser.parse_cover_url(book_cover_div)
         book = book.clone(description=description, cover_url=cover_url)
